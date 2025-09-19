@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Flashcards.module.css";
 
 type Card = {
@@ -11,15 +11,36 @@ const Flashcards: React.FC = () => {
   const [faces, setFaces] = useState<Card>({ front: "", back: "" });
   const [flipped, setFlipped] = useState<number | null>(null);
 
+  useEffect(() => {
+    const saved = localStorage.getItem("flashcards");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setCards(parsed);
+        }
+      } catch (err) {
+        console.error("Ошибка при чтении localStorage:", err);
+      }
+    }
+  }, []);
+
   const addCard = () => {
     if (faces.front.trim() && faces.back.trim()) {
-      setCards([...cards, { ...faces }]);
+      const updated = [...cards, { ...faces }];
+      setCards(updated);
+      localStorage.setItem("flashcards", JSON.stringify(updated));
       setFaces({ front: "", back: "" });
     }
   };
 
   const toggleFlip = (index: number) => {
     setFlipped(flipped === index ? null : index);
+  };
+
+  const clearCards = () => {
+    setCards([]);
+    localStorage.removeItem("flashcards");
   };
 
   return (
@@ -43,6 +64,9 @@ const Flashcards: React.FC = () => {
         />
         <button onClick={addCard} className={styles.addButton}>
           +
+        </button>
+        <button onClick={clearCards} className={styles.clearButton}>
+          🗑
         </button>
       </div>
 
