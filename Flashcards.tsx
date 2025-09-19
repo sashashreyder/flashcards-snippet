@@ -8,15 +8,13 @@ type Card = {
 
 const Flashcards: React.FC = () => {
   const [cards, setCards] = useState<Card[]>([]);
-  const [front, setFront] = useState("");
-  const [back, setBack] = useState("");
+  const [faces, setFaces] = useState<Card>({ front: "", back: "" });
   const [flipped, setFlipped] = useState<number | null>(null);
 
   const addCard = () => {
-    if (front.trim() && back.trim()) {
-      setCards([...cards, { front, back }]);
-      setFront("");
-      setBack("");
+    if (faces.front.trim() && faces.back.trim()) {
+      setCards([...cards, { ...faces }]);
+      setFaces({ front: "", back: "" });
     }
   };
 
@@ -27,19 +25,20 @@ const Flashcards: React.FC = () => {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Flashcards</h2>
+
       <div className={styles.form}>
         <input
           type="text"
           placeholder="Front"
-          value={front}
-          onChange={(e) => setFront(e.target.value)}
+          value={faces.front}
+          onChange={(e) => setFaces({ ...faces, front: e.target.value })}
           className={styles.input}
         />
         <input
           type="text"
           placeholder="Back"
-          value={back}
-          onChange={(e) => setBack(e.target.value)}
+          value={faces.back}
+          onChange={(e) => setFaces({ ...faces, back: e.target.value })}
           className={styles.input}
         />
         <button onClick={addCard} className={styles.addButton}>
@@ -68,3 +67,4 @@ const Flashcards: React.FC = () => {
 };
 
 export default Flashcards;
+
